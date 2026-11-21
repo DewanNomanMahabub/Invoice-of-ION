@@ -26,3 +26,5 @@ This version treats **CPU as the invoice unit price**: `CPU = MRP × (100 − GP
 4. Deploy. No environment variables are required.
 
 The included `vercel.json` supports the SPA route fallback.
+
+PDF currency values use the readable `Tk` prefix because the built-in PDF font does not reliably support the ৳ Unicode symbol. The on-screen interface continues to display ৳.

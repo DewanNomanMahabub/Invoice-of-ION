@@ -82,12 +82,26 @@ function App(){
     margin:{left:13,right:13}
    });
    let y=doc.lastAutoTable.finalY+7;
-   doc.setFont('helvetica','normal');doc.setFontSize(10);
-   const sx=143, vx=195;
-   doc.text('Subtotal',sx,y);doc.text(money(totals.subtotal),vx,y,{align:'right'});y+=7;
-   doc.text('Delivery Charge',sx,y);doc.text(money(totals.delivery),vx,y,{align:'right'});y+=2;
-   doc.setDrawColor(...blue);doc.line(135,y,197,y);y+=7;
-   doc.setFont('helvetica','bold');doc.text('Total',sx,y);doc.text(money(totals.total),vx,y,{align:'right'});y+=9;
+   // Use a dedicated, fixed-width two-column summary. Helvetica in jsPDF does
+   // not reliably contain the ৳ glyph; "Tk" keeps the currency readable and
+   // prevents the amount column from displaying with odd character spacing.
+   const pdfMoney = n => 'Tk ' + Number(n || 0).toLocaleString('en-US', {
+     minimumFractionDigits: 2, maximumFractionDigits: 2
+   });
+   const sx=143, vx=196;
+   doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(35,45,58);
+   doc.text('Subtotal',sx,y);
+   doc.text(pdfMoney(totals.subtotal),vx,y,{align:'right'});
+   y+=7;
+   doc.text('Delivery Charge',sx,y);
+   doc.text(pdfMoney(totals.delivery),vx,y,{align:'right'});
+   y+=4;
+   doc.setDrawColor(35,70,112);doc.setLineWidth(.35);doc.line(135,y,197,y);
+   y+=7;
+   doc.setFont('helvetica','bold');doc.setFontSize(10.5);
+   doc.text('Total',sx,y);
+   doc.text(pdfMoney(totals.total),vx,y,{align:'right'});
+   y+=9;
    doc.setFontSize(9);doc.text(`In Words: Taka ${words(totals.total)} Only`,14,y,{maxWidth:180});y+=7;
    doc.setFont('helvetica','bold');doc.text('(Please check your bill).',14,y);y+=12;
    if(bill.notes){doc.setFont('helvetica','normal');doc.text(`Note: ${bill.notes}`,14,y,{maxWidth:180});y+=8;}
